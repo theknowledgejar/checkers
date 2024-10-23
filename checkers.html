@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 0;
+            border: 2px solid #000;
+        }
+        .tile {
+            width: 60px;
+            height: 60px;
+        }
+        .black {
+            background-color: #000;
+        }
+        .red {
+            background-color: #d2691e;
+        }
+        .piece {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .piece.red {
+            background-color: #ff0000;
+        }
+        .piece.black {
+            background-color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    <script>
+        const boardElement = document.getElementById('board');
+        
+        // Initialize board by creating tiles and adding pieces in starting positions
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                
+                // Add black and red tiles in a checkerboard pattern
+                if ((row + col) % 2 !== 0) {
+                    tile.classList.add('black');
+                } else {
+                    tile.classList.add('red');
+                }
+                
+                // Store the row and column information as data attributes for reference
+                tile.dataset.row = row;
+                tile.dataset.col = col;
+                boardElement.appendChild(tile);
+
+                // Add pieces to the starting position for black and red sides
+                if (row < 3 && (row + col) % 2 !== 0) {  // Add black pieces in the top three rows on black tiles
+                    const piece = document.createElement('div');
+                    piece.classList.add('piece', 'black');
+                    tile.appendChild(piece);
+                    console.log(`Placed black piece at row ${row}, col ${col}`);
+                } else if (row > 4 && (row + col) % 2 !== 0) {  // Add red pieces in the bottom three rows on black tiles
+                    const piece = document.createElement('div');
+                    piece.classList.add('piece', 'red');
+                    tile.appendChild(piece);
+                    console.log(`Placed red piece at row ${row}, col ${col}`);
+                }
+            }
+        }
+
+        // Add functionality to move pieces (simplified version)
+        let selectedPiece = null;
+
+        // Event listener to handle piece selection and movement
+        boardElement.addEventListener('click', (event) => {
+            const tile = event.target.closest('.tile');  // Ensure the clicked element is a tile
+            if (!tile) {
+                console.log('Click event did not hit a tile');
+                return;
+            }
+
+            if (selectedPiece) {
+                // Attempt to move the selected piece to the clicked tile
+                console.log(`Attempting to move selected piece to row ${tile.dataset.row}, col ${tile.dataset.col}`);
+                
+                // Move the selected piece if the target tile is empty and is a valid black tile
+                if (!tile.querySelector('.piece') && tile.classList.contains('black')) {
+                    tile.appendChild(selectedPiece);
+                    console.log(`Moved piece to row ${tile.dataset.row}, col ${tile.dataset.col}`);
+                    selectedPiece = null;  // Deselect the piece after moving
+                } else {
+                    console.log('Tile is not empty or not a valid move');
+                }
+            } else if (tile.querySelector('.piece')) {
+                // Select a piece to move
+                selectedPiece = tile.querySelector('.piece');
+                console.log(`Selected piece at row ${tile.dataset.row}, col ${tile.dataset.col}`);
+            } else {
+                console.log('Clicked on an empty tile without a piece');
+            }
+        });
+    </script>
+</body>
+</html>
